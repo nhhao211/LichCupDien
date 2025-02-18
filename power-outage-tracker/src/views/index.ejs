@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch Cúp Điện Bình Thuận</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4e6479;
+            --secondary-color: #0390ee;
+            --accent-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --border-radius: 8px;
+        }
+
+        body {
+            background-color: #f5f6fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 25px 0;
+            margin-bottom: 30px;
+            color: white;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 2.5em;
+            color: #ffd700;
+        }
+
+        .title-section h1 {
+            margin: 0;
+            font-size: 2em;
+            font-weight: 600;
+        }
+
+        .search-form {
+            background: white;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .form-control, .form-select {
+            border-radius: var(--border-radius);
+            padding: 10px 15px;
+            border: 1px solid #e1e1e1;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .date-range {
+            background: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        }
+
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background-color: var(--light-bg);
+            border-bottom: 2px solid var(--secondary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+            padding: 15px;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .area-cell {
+            max-width: 300px;
+        }
+
+        .time-cell {
+            white-space: nowrap;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        .last-updated {
+            font-size: 0.9em;
+            color: #666;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+
+        .alert {
+            border-radius: var(--border-radius);
+            padding: 15px 20px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .table-responsive {
+                margin: 0 -15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="title-section">
+                    <h1>Lịch Cúp Điện Tỉnh Bình Thuận</h1>
+                    <p class="mb-0">Cập nhật tự động mỗi 2 giờ</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="search-form">
+            <form method="GET" action="/" class="row g-3">
+                <div class="col-md-5">
+                    <label for="district" class="form-label">
+                        <i class="fas fa-map-marker-alt me-2"></i>Chọn khu vực
+                    </label>
+                    <select name="district" id="district" class="form-select">
+                        <option value="">Tất cả khu vực</option>
+                        <% districts.forEach(function(district) { %>
+                            <option value="<%= district.code %>" 
+                                    <%= selectedDistrict === district.code ? 'selected' : '' %>>
+                                <%= district.name %>
+                            </option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label for="date" class="form-label">
+                        <i class="fas fa-calendar-alt me-2"></i>Chọn ngày bắt đầu
+                    </label>
+                    <input type="date" class="form-control" id="date" name="date" 
+                           value="<%= selectedDate %>" 
+                           min="<%= moment().format('YYYY-MM-DD') %>"
+                           max="<%= moment().add(30, 'days').format('YYYY-MM-DD') %>">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-2"></i>Tìm kiếm
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <% if (selectedDistrict) { %>
+            <div class="date-range text-center">
+                <i class="fas fa-calendar-week me-2"></i>
+                <strong>Lịch cúp điện từ ngày <%= startDate %> đến ngày <%= endDate %></strong>
+            </div>
+        <% } %>
+
+        <% if (outages.length === 0) { %>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Không có lịch cúp điện nào được tìm thấy cho khu vực và thời gian đã chọn.
+            </div>
+        <% } else { %>
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 60px">STT</th>
+                                <th style="width: 120px">Ngày</th>
+                                <th style="width: 150px">Thời gian</th>
+                                <th>Khu vực bị ảnh hưởng</th>
+                                <th>Lý do</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% outages.forEach(function(outage, index) { %>
+                                <tr>
+                                    <td class="text-center"><%= index + 1 %></td>
+                                    <td class="time-cell"><%= outage.outage_date %></td>
+                                    <td class="time-cell"><%= outage.start_time %> - <%= outage.end_time %></td>
+                                    <td class="area-cell"><%= outage.affected_area %></td>
+                                    <td><%= outage.reason %></td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        <% } %>
+
+        <div class="last-updated">
+            <i class="fas fa-sync-alt me-2"></i>
+            Cập nhật lần cuối: <%= moment().format('DD/MM/YYYY HH:mm:ss') %>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="container">
+            <p class="text-center mb-0">
+                <i class="fas fa-database me-2"></i>
+                Dữ liệu được cung cấp bởi Công ty Điện lực Bình Thuận
+            </p>
+        </div>
+    </div>
+</body>
+</html>
